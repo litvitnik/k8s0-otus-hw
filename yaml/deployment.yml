@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helthcheck-deployment
+  labels:
+    app: helthcheck-deployment
+spec:
+  replicas: 2
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      env: otus
+  template:
+    metadata:
+      labels:
+        env: otus
+    spec:
+      containers:
+      - name: healthcheck
+        image: litvitnik/ltnvsk-health-check:1.0
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 6
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 3
